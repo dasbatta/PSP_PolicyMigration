@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: restricted-ns
+    pod-security.kubernetes.io/enforce: restricted
+  name: restricted-ns
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: baseline-ns
+    pod-security.kubernetes.io/enforce: baseline
+  name: baseline-ns
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: privileged-ns
+    pod-security.kubernetes.io/enforce: privileged
+  name: privileged-ns
+spec:
+  finalizers:
+  - kubernetes

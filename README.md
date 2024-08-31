@@ -1,12 +1,12 @@
-# Fiserv PSP Migration
+# Customer PSP Migration
 
-As part of upgrading it's k8s clusters to 1.25, Fiserv needs to migrate their Security Policies from PSPs to PSAs and then to OPA Constrains. This documents presents a solution tested during the week of 04/14/2024.
+As part of upgrading it's k8s clusters to 1.25, Customer needs to migrate their Security Policies from PSPs to PSAs and then to OPA Constrains. This documents presents a solution tested during the week of 04/14/2024.
 
 ## Problem description
 
-A PSP (psp-fiserv.yaml) is used across the board to set the minimal security requirements for a compliant cluster following Fiserv Infosec recommendations.
+A PSP (psp-Customer.yaml) is used across the board to set the minimal security requirements for a compliant cluster following Customer Infosec recommendations.
 
-As PSPs get removed from the Kubernetes API in v1.25, Fiserv needs to remove the PSPs in place.
+As PSPs get removed from the Kubernetes API in v1.25, Customer needs to remove the PSPs in place.
 
 ## Solution
 
@@ -51,10 +51,10 @@ kustomize build library | k apply -f-
 
 ### Create OPA Constrains
 
-We used [psp-migration](https://github.com/appvia/psp-migration/) tool to translate the PSP to OPA constrains and the result is in `opa-fiserv.yaml`
+We used [psp-migration](https://github.com/appvia/psp-migration/) tool to translate the PSP to OPA constrains and the result is in `opa-Customer.yaml`
 
 ```sh
-kubectl apply -f opa-fiserv.yaml
+kubectl apply -f opa-Customer.yaml
 ```
 
 ### Test
@@ -75,7 +75,7 @@ k apply -f green-test-pod.yaml -n privileged-ns
 pod/busybox created
 
 ```
-# Fiserv PSP Migration Notes
+# Customer PSP Migration Notes
 
 Step 1:
 

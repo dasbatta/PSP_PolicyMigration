@@ -1,18 +1,20 @@
 # Customer PSP Migration
 
-As part of upgrading it's k8s clusters to 1.25, Customer needs to migrate their Security Policies from PSPs to PSAs and then to OPA Constrains. This documents presents a solution tested during the week of 04/14/2024.
+As part of upgrading k8s clusters to 1.25 or Higher, the Customer needed to migrate their Security Policies from PSPs to PSAs (Non Mutating) and then to OPA Constraints (Mutating). This document presents a solution tested during the week of 04/14/2024.
+- We know we have to address API deprecation. our migation tool has built-in features and we were going to leverage Helm remap-api plugin 
+- Customer is heavy user of PSP, deprecated in 1.25. We had to use PSA non-mutation, validation and OPA mutation Policies 
 
 ## Problem description
 
 A PSP (psp-Customer.yaml) is used across the board to set the minimal security requirements for a compliant cluster following Customer Infosec recommendations.
 
-As PSPs get removed from the Kubernetes API in v1.25, Customer needs to remove the PSPs in place.
+As PSPs get removed from the Kubernetes API in v1.25, the Fin-tech Customer needs to remove the PSPs in place.
 
 ## Solution
 
 ### Namespace labeling
 
-To address the cluster overall security we will rely on Pod Secutiry Standards enforced to namespaces labeling.
+To address the cluster's overall security, we will rely on Pod Security Standards enforced to namespaces labeling.
 
 ```sh
 kubectl label --overwrite ns --all pod-security.kubernetes.io/enforce=retricted

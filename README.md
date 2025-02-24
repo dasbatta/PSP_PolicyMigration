@@ -182,4 +182,52 @@ Once validation is complete from App team scale up
 
 kubectl -n falcon-system patch daemonset falcon-sensor-node-cleanup --type json -p='[{"op": "remove", "path": "/spec/template/spec/nodeSelector/non-existing"}]'
 
- 
+-------------------------------------------------------------------
+**Best Practices:**
+
+DRY-RUN:
+
+Migration scenarios:
+When it comes to applying PSA, there are four scenarios in which users can find themselves: 
+
+- Migrating brand-new workloads directly to PSA. 
+- Migrating existing, policy-free workloads that are not under any policy to PSA. 
+- Migrating existing workloads with simple PSPs to PSA. 
+- Migrating existing workloads with elaborate PSPs to an external admission controller. 
+
+Onboarding of new and policy-free workloads,
+Whether you need to stage a brand-new cluster, add a new workload to an existing cluster, or migrate existing clusters or namespaces to PSA, this section will guide you through the process. When applying PSS to a new or existing PSP-free workload, we can use the following commands:
+
+```sh
+$ kubectl label ns <namespace name> pod-security.kubernetes.io/enforce=<level> --dry-run=server
+```
+
+Note the --dry-run=server flag—this flag enables various checks to be carried out, including authentication and authorization, without applying any changes. If the PSS level is suitable for the namespace workloads, there will be no warnings in the output. Otherwise, kubectl will helpfully print a list of warnings detailing the specific problems:
+
+```sh
+$ kubectl label ns default pod-security.kubernetes.io/enforce=restricted --dry-run=server 
+Warning: existing pods in namespace "default" violate the new PodSecurity 
+enforce level "restricted:latest" 
+
+Warning: andy-dufresne: host namespaces, privileged, allowPrivilegeEscalation 
+!= false, unrestricted capabilities, runAsNonRoot != true, seccompProfile 
+
+namespace/default labeled (server dry run)
+```
+
+Takeaways:
+- What is the current state of security policy adoption?  
+
+Data shows that migration to PSA from PSP has been slow. The worst scenario entails losing Kubernetes users who currently use PSP and stop using any policy after the upgrade to v1.25. 
+
+- What can I do about the transition to PSA/PSS? 
+
+There is more than one way to facilitate migration, but you must start before version 1.25. Hopefully, this guide can serve as a starting point.  
+
+- What should I expect? 
+
+To demonstrate what you should expect when attempting to apply PSS to typical workloads, we have compiled a table specifying which PSS levels are expected:
+
+![image](https://github.com/user-attachments/assets/013d67cc-9ccd-4967-9029-41f34f18082f)
+
+Two patterns emerge: 1) Similar applications can have different PSS levels across CSPs (multi-cloud Kubernetes users should be ready for migration process variation across CSPs), and (2) none of the applications can operate at a restricted level, which after all is rather demanding.
